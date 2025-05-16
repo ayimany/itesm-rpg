@@ -174,6 +174,22 @@ struct living_entity : virtual public entity {
 	int level_;
 };
 
+struct tool {
+	[[nodiscard]] virtual constexpr auto
+	can_use_on(living_entity const &user,
+		   living_entity const &target) const noexcept -> bool = 0;
+
+	[[nodiscard]] virtual constexpr auto
+	can_use_on(living_entity const &user,
+		   point2d const &target) const noexcept -> bool = 0;
+
+	virtual constexpr auto use(living_entity &user,
+				   living_entity &target) noexcept -> void = 0;
+
+	virtual constexpr auto use(living_entity &user,
+				   point2d &position) noexcept -> void = 0;
+};
+
 
 auto main() -> int
 {
