@@ -1,5 +1,7 @@
 #pragma once
 
+#include "rpg/lib/units.hh"
+
 namespace rpg::math
 {
 

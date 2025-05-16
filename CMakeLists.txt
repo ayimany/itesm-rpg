@@ -3,20 +3,10 @@ project(RPGProject LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
-
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-include_directories(
-    src
-    src/rpg
-    src/rpg/lib
-    src/rpg/math
-)
+add_executable(rpg_game src/main.cc)
 
-set(SOURCES
-    src/main.cc
-)
+target_include_directories(rpg_game PRIVATE src)
 
-add_executable(rpg_game ${SOURCES})
-
+set_target_properties(rpg_game PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)

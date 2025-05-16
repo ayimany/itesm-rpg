@@ -2,7 +2,7 @@
 
 #include <algorithm>
 
-#include "cartesian2d.hh"
+#include "rpg/math/cartesian2d.hh"
 
 namespace rpg
 {
