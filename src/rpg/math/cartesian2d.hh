@@ -28,7 +28,7 @@ struct cartesian2d {
 		return y_;
 	}
 
-    private:
+    protected:
 	units::length::meter_t x_;
 	units::length::meter_t y_;
 };
@@ -51,6 +51,10 @@ struct vector2d : public cartesian2d {
 	{
 		return units::math::sqrt(square_magnitude());
 	}
+};
+
+struct grid2d : public cartesian2d {
+	[[nodiscard]] constexpr auto get_width() const noexcept -> double;
 };
 
 struct point2d : public cartesian2d {
@@ -81,12 +85,40 @@ struct point2d : public cartesian2d {
 	}
 
 	[[nodiscard]] constexpr auto
-	displaced_by(vector2d const &displacement_vector) const noexcept
+	translated_by(vector2d const &displacement_vector) const noexcept
 		-> point2d
 	{
 		return point2d{ x() + displacement_vector.x(),
 				y() + displacement_vector.y() };
 	}
+};
+
+struct locatable2d {
+	explicit constexpr locatable2d(point2d const &position)
+		: position_(position)
+	{
+	}
+
+	[[nodiscard]] constexpr auto
+	distance_to(locatable2d const &other) const noexcept
+		-> units::length::meter_t
+	{
+		return position_.distance_to(other.position_);
+	}
+
+	constexpr auto
+	translate_by(math::vector2d const &displacement_vector) noexcept -> void
+	{
+		this->position_ = position_.translated_by(displacement_vector);
+	}
+
+	[[nodiscard]] constexpr auto position() const noexcept -> point2d
+	{
+		return position_;
+	}
+
+    protected:
+	point2d position_;
 };
 
 namespace constants
