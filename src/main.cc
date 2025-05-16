@@ -98,6 +98,82 @@ namespace constants
 constexpr point2d origin = point2d(0.0_m, 0.0_m);
 }
 
+struct entity {
+	explicit constexpr entity(point2d const &position)
+		: position_(position)
+	{
+	}
+
+	explicit constexpr entity()
+		: entity(constants::origin)
+	{
+	}
+
+	[[nodiscard]] constexpr auto
+	distance_to(entity const &other) const noexcept
+		-> units::length::meter_t
+	{
+		return position_.distance_to(other.position_);
+	}
+
+	constexpr auto displace_by(vector2d const &displacement_vector) noexcept
+		-> void
+	{
+		this->position_ = position_.displaced_by(displacement_vector);
+	}
+
+	[[nodiscard]] constexpr auto position() const noexcept -> point2d
+	{
+		return position_;
+	}
+
+    private:
+	point2d position_;
+};
+
+struct living_entity : virtual public entity {
+	explicit living_entity(double max_health) noexcept
+		: max_health_(max_health),
+		  health_(max_health),
+		  level_(1)
+	{
+	}
+
+	[[nodiscard]] auto is_dead() const noexcept -> bool
+	{
+		return health_ <= 0.0;
+	}
+
+	[[nodiscard]] auto is_alive() const noexcept -> bool
+	{
+		return !is_dead();
+	}
+
+	auto heal(double amount) noexcept -> void
+	{
+		health_ = std::clamp(health_ + amount, 0.0, max_health_);
+	}
+
+	auto hurt(double amount) noexcept -> void
+	{
+		// We want players to know how much overkill damage they did if they
+		// manage to perform one, but we still don't want the right conditions
+		// to mix and bypass max health
+		health_ = std::clamp(health_ - amount,
+				     -std::numeric_limits<double>::infinity(),
+				     max_health_);
+	}
+
+	// not protected due to non-derived access in sentient_entity
+	virtual auto on_hurt(living_entity &other, double amount) noexcept
+		-> void = 0;
+
+    private:
+	double max_health_;
+	double health_;
+	int level_;
+};
+
 
 auto main() -> int
 {
