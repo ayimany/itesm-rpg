@@ -2,11 +2,7 @@
 
 #include "units.hh"
 #include <algorithm>
-#include <cstdint>
-#include <vector>
 
-// Only exposes literals
-// Does not cause any identifiers to breach their namespaces
 using namespace units::literals;
 
 struct cartesian2d {
@@ -30,8 +26,6 @@ struct cartesian2d {
 		return y_;
 	}
 
-	// This is on purpose.
-	// I operate under encapsulation forbidding the use of protected fields
     private:
 	units::length::meter_t x_;
 	units::length::meter_t y_;
@@ -156,15 +150,11 @@ struct living_entity : virtual public entity {
 
 	auto hurt(double amount) noexcept -> void
 	{
-		// We want players to know how much overkill damage they did if they
-		// manage to perform one, but we still don't want the right conditions
-		// to mix and bypass max health
 		health_ = std::clamp(health_ - amount,
 				     -std::numeric_limits<double>::infinity(),
 				     max_health_);
 	}
 
-	// not protected due to non-derived access in sentient_entity
 	virtual auto on_hurt(living_entity &other, double amount) noexcept
 		-> void = 0;
 
@@ -189,7 +179,6 @@ struct tool {
 	virtual constexpr auto use(living_entity &user,
 				   point2d &position) noexcept -> void = 0;
 };
-
 
 auto main() -> int
 {
